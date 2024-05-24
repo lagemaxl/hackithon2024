@@ -1,14 +1,8 @@
-/* global fetch */
-import React, {useState, useMemo, useEffect} from 'react';
-import {createRoot} from 'react-dom/client';
-import {Map} from 'react-map-gl/maplibre';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Map } from 'react-map-gl/maplibre';
 import DeckGL from '@deck.gl/react';
-import {GeoJsonLayer, ArcLayer} from '@deck.gl/layers';
-import {scaleQuantile} from 'd3-scale';
-
-// Source data GeoJSON
-const DATA_URL =
-  'https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/arc/counties.json'; // eslint-disable-line
+import { GeoJsonLayer, ArcLayer } from '@deck.gl/layers';
+import { scaleQuantile } from 'd3-scale';
 
 export const inFlowColors = [
   [255, 255, 204],
@@ -31,9 +25,9 @@ export const outFlowColors = [
 ];
 
 const INITIAL_VIEW_STATE = {
-  longitude: 14.0323, // Updated longitude for Ústecký kraj
-  latitude: 50.6611,  // Updated latitude for Ústecký kraj
-  zoom: 8, // Adjusted zoom level for better visibility
+  longitude: 14.0323,
+  latitude: 50.6611,
+  zoom: 8,
   maxZoom: 15,
   pitch: 30,
   bearing: 30
@@ -46,19 +40,14 @@ function calculateArcs(data, selectedCounty) {
     return null;
   }
   if (!selectedCounty) {
-    selectedCounty = data.find(f => f.properties.name === 'Los Angeles, CA');
+    selectedCounty = data[0]; // Select first entry as default
   }
-  const {flows} = selectedCounty.properties;
-
-  const arcs = Object.keys(flows).map(toId => {
-    const f = data[Number(toId)];
-    return {
-      source: selectedCounty,
-      target: f,
-      value: flows[toId],
-      quantile: 0
-    };
-  });
+  const arcs = data.map(f => ({
+    source: selectedCounty,
+    target: f,
+    value: Math.random() * 100, // Placeholder value for arcs
+    quantile: 0
+  }));
 
   const scale = scaleQuantile()
     .domain(arcs.map(a => Math.abs(a.value)))
@@ -71,12 +60,11 @@ function calculateArcs(data, selectedCounty) {
   return arcs;
 }
 
-function getTooltip({object}) {
-  return object && object.properties.name;
+function getTooltip({ object }) {
+  return object && object.msg && `Sensor ID: ${object.msg.id_senzoru}`;
 }
 
-/* eslint-disable react/no-deprecated */
-export default function App({
+function MapComponent({
   data,
   strokeWidth = 1,
   mapStyle = MAP_STYLE
@@ -104,14 +92,14 @@ export default function App({
       stroked: false,
       filled: true,
       getFillColor: [0, 0, 0, 0],
-      onClick: ({object}) => selectCounty(object),
+      onClick: ({ object }) => selectCounty(object),
       pickable: true
     }),
     new ArcLayer({
       id: 'arc',
       data: arcs,
-      getSourcePosition: d => d.source.properties.centroid,
-      getTargetPosition: d => d.target.properties.centroid,
+      getSourcePosition: d => [d.source.msg.lon, d.source.msg.lat],
+      getTargetPosition: d => [d.target.msg.lon, d.target.msg.lat],
       getSourceColor: d => (d.value > 0 ? inFlowColors : outFlowColors)[d.quantile],
       getTargetColor: d => (d.value > 0 ? outFlowColors : inFlowColors)[d.quantile],
       getWidth: strokeWidth
@@ -120,23 +108,16 @@ export default function App({
 
   return (
     <div className='map'>
-    <DeckGL
-      layers={layers}
-      initialViewState={INITIAL_VIEW_STATE}
-      controller={true}
-      getTooltip={getTooltip}
-    >
-      <Map reuseMaps mapStyle={mapStyle} />
-    </DeckGL>
+      <DeckGL
+        layers={layers}
+        initialViewState={INITIAL_VIEW_STATE}
+        controller={true}
+        getTooltip={getTooltip}
+      >
+        <Map reuseMaps mapStyle={mapStyle} />
+      </DeckGL>
     </div>
   );
 }
 
-export async function renderToDOM(container) {
-  const root = createRoot(container);
-  root.render(<App />);
-
-  const resp = await fetch(DATA_URL);
-  const {features} = await resp.json();
-  root.render(<App data={features} />);
-}
+export default MapComponent;
