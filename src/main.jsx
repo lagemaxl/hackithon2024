@@ -5,6 +5,7 @@ import Layout from './pages/Layout';
 import Home from './pages/Home';
 import MapComponent from './pages/MapComponent';
 import NoPage from './pages/NoPage';
+import "./index.css";
 
 const data = [
   {
