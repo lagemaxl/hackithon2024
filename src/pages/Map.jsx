@@ -119,6 +119,7 @@ export default function App({
   ];
 
   return (
+    <div className='map'>
     <DeckGL
       layers={layers}
       initialViewState={INITIAL_VIEW_STATE}
@@ -127,6 +128,7 @@ export default function App({
     >
       <Map reuseMaps mapStyle={mapStyle} />
     </DeckGL>
+    </div>
   );
 }
 
