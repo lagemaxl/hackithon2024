@@ -238,3 +238,9 @@ nav ul li a:focus {
 a {
   color: #63b3ed !important;
 }
+
+.iframe {
+  width: 100%;
+  height: 300px;
+  border: none;
+}

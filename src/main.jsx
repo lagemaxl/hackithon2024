@@ -74,7 +74,7 @@ export default function App() {
             {" "}
             {/*element={<Layout />}*/}
             <Route index element={<Home />} />
-            <Route path="map" element={<MapComponent data={data} />} />
+            <Route path="map" element={<MapComponent data={data}/>} />
             <Route path="*" element={<NoPage />} />
           </Route>
         </Routes>

@@ -49,7 +49,7 @@ const AreaGraph = ({ currentPath }) => {
 
   return (
     <div className='graph' style={{ width: '100%', height: 300 }}>
-      <h2>Zobrazení počtu zpráv každou minutu</h2>
+      <h2>Zobrazení počtu zpráv každou minutu ve zvoleném období</h2>
       <ResponsiveContainer>
         <AreaChart
           data={data}

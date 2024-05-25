@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Map } from "react-map-gl/maplibre";
 import DeckGL from "@deck.gl/react";
 import { GeoJsonLayer, ArcLayer, TextLayer } from "@deck.gl/layers";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const blueColor = [0, 0, 255];
 const whiteColor = [255, 255, 255];
@@ -47,6 +47,8 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     longitude: 14.0069265,
   });
   const [animationStep, setAnimationStep] = useState(0);
+  const location = useLocation();
+  const showbtn = location.pathname === "/map";
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -105,7 +107,8 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
           (whiteColor[2] * t) / 100,
         ];
       },
-      getWidth: (d) => strokeWidth * (4 + Math.sin((animationStep + d.value) * 5)),
+      getWidth: (d) =>
+        strokeWidth * (4 + Math.sin((animationStep + d.value) * 5)),
       updateTriggers: {
         getSourceColor: animationStep,
         getTargetColor: animationStep,
@@ -116,7 +119,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
       id: "text-layer",
       data: [
         ...data,
-        { name: "DCUK", latitude: 50.6810518, longitude: 14.0069265 }
+        { name: "DCUK", latitude: 50.6810518, longitude: 14.0069265 },
       ],
       pickable: true,
       getPosition: (d) => [d.longitude, d.latitude],
@@ -124,19 +127,19 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
       getSize: (d) => (d.name === "DCUK" ? 48 : 32),
       getColor: (d) => (d.name === "DCUK" ? [0, 0, 0] : [0, 0, 0]),
       getAngle: 0,
-      getTextAnchor: 'middle',
-      getAlignmentBaseline: 'center'
+      getTextAnchor: "middle",
+      getAlignmentBaseline: "center",
     }),
   ];
 
   return (
     <div className="map">
-      <Link to="/" className="dash-button">« Zpět na dashboard</Link>
-      <DeckGL
-        layers={layers}
-        initialViewState={INITIAL_VIEW_STATE}
-        controller={true}
-      >
+      {showbtn && (
+        <Link to="/" className="dash-button">
+          « Zpět na dashboard
+        </Link>
+      )}
+      <DeckGL layers={layers} initialViewState={INITIAL_VIEW_STATE} controller={true}>
         <Map reuseMaps mapStyle={mapStyle} />
       </DeckGL>
     </div>

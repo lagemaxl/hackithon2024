@@ -48,7 +48,9 @@ const Home = () => {
 
   // Fetch message count and size based on the currentPath and selected dates
   useEffect(() => {
-    const start = startDate ? startDate.toISOString() : new Date().toISOString();
+    const start = startDate
+      ? startDate.toISOString()
+      : new Date().toISOString();
     const end = endDate ? endDate.toISOString() : new Date().toISOString();
 
     const url = currentPath
@@ -135,19 +137,19 @@ const Home = () => {
       <div className="main">
         <div className="blocks">
           <div className="block">
-            <h2>Počet zpráv</h2>
+            <h2>Počet zpráv ve zvoleném období</h2>
             <h1>{messageCount}</h1>
           </div>
 
           <div className="block">
-            <h2>Velikost zpráv</h2>
+            <h2>Velikost zpráv ve zvoleném období</h2>
             <h1>{messageSize}</h1>
           </div>
         </div>
 
         <div className="blocks">
           <div className="block">
-            <h2>Datum a čas od</h2>
+            <h2>Vybraný datum a čas od</h2>
             <DateTimePicker
               clearable
               value={startDate}
@@ -156,7 +158,7 @@ const Home = () => {
             />
           </div>
           <div className="block">
-            <h2>Datum a čas do</h2>
+            <h2>Vybraný datum a čas do</h2>
             <DateTimePicker
               clearable
               value={endDate}
@@ -167,16 +169,27 @@ const Home = () => {
         </div>
 
         <div>
-          <AreaGraph currentPath={currentPath} startDate={startDate} endDate={endDate} />
-          <AreaGraph2 currentPath={currentPath} startDate={startDate} endDate={endDate} />
+          <AreaGraph
+            currentPath={currentPath}
+            startDate={startDate}
+            endDate={endDate}
+          />
+          <AreaGraph2
+            currentPath={currentPath}
+            startDate={startDate}
+            endDate={endDate}
+          />
         </div>
-
+        <iframe src="/map" className="iframe"></iframe>
         <div className="footer">
-          <h3>Vytvořil tým 50vataM na <a href="https://hackithon.ujep.cz/" target="_blank">Hackithonu 2024</a></h3>
+          <h3>
+            Vytvořil tým 50vataM na{" "}
+            <a href="https://hackithon.ujep.cz/" target="_blank">
+              Hackithonu 2024
+            </a>
+          </h3>
           <Link to="/map">
-          <button className="map-button">
-            Přejít na mapu
-          </button>
+            <button className="map-button">Přejít na mapu</button>
           </Link>
         </div>
       </div>
