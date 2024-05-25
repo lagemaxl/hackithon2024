@@ -208,3 +208,14 @@ nav ul li a:focus {
   justify-content: flex-end;
   bottom: 0;
 }
+
+.graph {
+  border-radius: 5px;
+  border: 1px solid black;
+  padding: 1em;
+  padding-bottom: 3em;
+  gap: 0.5em;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1em;
+}
