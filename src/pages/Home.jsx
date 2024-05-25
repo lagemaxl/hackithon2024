@@ -172,6 +172,7 @@ const Home = () => {
         </div>
 
         <div className="footer">
+          <h3>Vytvořil tým 50vataM na <a href="https://hackithon.ujep.cz/" target="_blank">Hackithonu 2024</a></h3>
           <button className="map-button">
             <Link to="/map">Přejít na mapu</Link>
           </button>
