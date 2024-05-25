@@ -24,7 +24,11 @@ function calculateArcs(data, selectedCounty) {
     return null;
   }
   if (!selectedCounty) {
-    selectedCounty =  { name: "unknown", latitude: 50.6810518, longitude: 14.0069265 } // Select first entry as default
+    selectedCounty = {
+      name: "unknown",
+      latitude: 50.6810518,
+      longitude: 14.0069265,
+    }; // Select first entry as default
   }
   const arcs = data.map((f) => ({
     source: selectedCounty,
@@ -36,57 +40,22 @@ function calculateArcs(data, selectedCounty) {
   return arcs;
 }
 
-
-/*
-function getTooltip({ object }) {
-  return object && object.msg && `Sensor ID: ${object.msg.id_senzoru}`;
-}
-*/
-
 function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
   const [selectedCounty, selectCounty] = useState();
-  const [colorState, setColorState] = useState(1);
+  const [animationStep, setAnimationStep] = useState(0);
 
   useEffect(() => {
-    console.log(data);
-    calculateArcs(data);
-    }, [data]);
+    const interval = setInterval(() => {
+      setAnimationStep((prev) => (prev + 1) % 100);
+    }, 100); // Change 100 to control the speed of the animation
+    return () => clearInterval(interval);
+  }, []);
 
   const arcs = useMemo(
     () => calculateArcs(data, selectedCounty),
     [data, selectedCounty]
   );
 
-/**
-  useEffect(() => {
-    let timer;
-    console.log(colorState);
-    if (colorState < 5) {
-      timer = setTimeout(() => {
-        setColorState((prev) => (prev === 4 ? 5 : prev + 1));
-      }, 1000); // Changed to 1000ms (1 second) for better visibility
-    }
-    return () => clearTimeout(timer);
-  }, [colorState]);
-
-
-  const getColors = () => {
-    switch (colorState) {
-      case 1:
-        return { sourceColor: whiteColor, targetColor: blueColor };
-      case 2:
-        return { sourceColor: blueColor, targetColor: blueColor };
-      case 3:
-        return { sourceColor: blueColor, targetColor: whiteColor };
-      case 4:
-        return { sourceColor: whiteColor, targetColor: whiteColor };
-      default:
-        return { sourceColor: [0, 0, 0, 0], targetColor: [0, 0, 0, 0] }; // Transparent color when arcs are removed
-    }
-  };
-
-  const { sourceColor, targetColor } = getColors();
- */
   const layers = [
     new GeoJsonLayer({
       id: "geojson",
@@ -99,23 +68,30 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     }),
     new ArcLayer({
       id: "arc",
-      data: colorState < 5 ? arcs : [], // Remove arcs when colorState is 5
+      data: arcs,
       getSourcePosition: (d) => [d.source.longitude, d.source.latitude],
       getTargetPosition: (d) => [d.target.longitude, d.target.latitude],
-      //getSourceColor: () => sourceColor,
-      //getTargetColor: () => targetColor,
-      getSourceColor: () => blueColor,
-      getTargetColor: () => blueColor,
-      getWidth: strokeWidth,
-      /**
-      updateTriggers: {
-        getSourceColor: colorState,
-        getTargetColor: colorState,
+      getSourceColor: (d) => {
+        const t = (animationStep + d.value) % 100;
+        return [
+          (blueColor[0] * t) / 100,
+          (blueColor[1] * t) / 100,
+          (blueColor[2] * t) / 100,
+        ];
       },
-       */
+      getTargetColor: (d) => {
+        const t = (animationStep + d.value) % 100;
+        return [
+          (whiteColor[0] * t) / 100,
+          (whiteColor[1] * t) / 100,
+          (whiteColor[2] * t) / 100,
+        ];
+      },
+      getWidth: (d) => strokeWidth * (4 + Math.sin((animationStep + d.value) * 5)),
       updateTriggers: {
-        getSourceColor: blueColor,
-        getTargetColor: blueColor,
+        getSourceColor: animationStep,
+        getTargetColor: animationStep,
+        getWidth: animationStep,
       },
     }),
   ];
@@ -126,7 +102,6 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
         layers={layers}
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
-        //getTooltip={getTooltip}
       >
         <Map reuseMaps mapStyle={mapStyle} />
       </DeckGL>

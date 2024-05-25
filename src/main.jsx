@@ -21,7 +21,17 @@ function useWebSocket(url) {
 
     ws.onmessage = (event) => {
       console.log(event.data);
-      setData((prevData) => [...prevData, JSON.parse(event.data)]);
+      const timestampedData = {
+        ...JSON.parse(event.data),
+        timestamp: Date.now(),
+      };
+      setData((prevData) => {
+        const newData = [...prevData, timestampedData];
+        if (newData.length > 10) {
+          newData.shift(); // Remove the oldest item
+        }
+        return newData;
+      });
     };
 
     ws.onclose = () => {
@@ -32,6 +42,14 @@ function useWebSocket(url) {
       ws.close();
     };
   }, [url]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setData((prevData) => prevData.filter(item => (Date.now() - item.timestamp) <= 1000));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return data;
 }
