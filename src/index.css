@@ -205,7 +205,8 @@ nav ul li a:focus {
   border-radius: 5px;
   bottom: 0;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
   bottom: 0;
 }
 
@@ -213,7 +214,7 @@ nav ul li a:focus {
   border-radius: 5px;
   border: 1px solid black;
   padding: 1em;
-  padding-bottom: 3em;
+  padding-bottom: 1em;
   gap: 0.5em;
   display: flex;
   flex-direction: column;
@@ -232,4 +233,8 @@ nav ul li a:focus {
   width: 15em;
   top: 1em;
   left: 1em;
+}
+
+a {
+  color: #63b3ed !important;
 }
