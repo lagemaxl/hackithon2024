@@ -10,12 +10,18 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mantine/core": "^7.10.0",
+    "@mantine/form": "^7.10.0",
+    "@mantine/hooks": "^7.10.0",
+    "@react-spring/web": "^9.7.3",
+    "axios": "^1.7.2",
     "deck.gl": "^9.0.16",
     "mapbox-gl": "^3.4.0",
     "maplibre-gl": "^4.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-map-gl": "^7.1.7"
+    "react-map-gl": "^7.1.7",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
@@ -25,6 +31,9 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "postcss": "^8.4.38",
+    "postcss-preset-mantine": "^1.15.0",
+    "postcss-simple-vars": "^7.0.1",
     "react-router-dom": "^6.23.1",
     "vite": "^5.2.0"
   }

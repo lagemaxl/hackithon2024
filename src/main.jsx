@@ -5,7 +5,8 @@ import Layout from './pages/Layout';
 import Home from './pages/Home';
 import MapComponent from './pages/MapComponent';
 import NoPage from './pages/NoPage';
-import "./index.css";
+import "./index.css";import '@mantine/core/styles.css';
+import { MantineProvider } from '@mantine/core';
 
 const data = [
   {
@@ -128,6 +129,7 @@ const data = [
 
 export default function App() {
   return (
+    <MantineProvider>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
@@ -137,6 +139,7 @@ export default function App() {
         </Route>
       </Routes>
     </BrowserRouter>
+    </MantineProvider>
   );
 }
 
