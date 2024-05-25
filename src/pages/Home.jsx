@@ -4,7 +4,7 @@ import axios from "axios";
 import AreaGraph from "./components/AreaGraph";
 import AreaGraph2 from "./components/AreaGraph2";
 import { Link } from "react-router-dom";
-import { DateTimePicker } from '@mantine/dates';
+import { DateTimePicker } from "@mantine/dates";
 
 const Home = () => {
   const [data, setData] = useState([]);
@@ -14,14 +14,22 @@ const Home = () => {
   const [messageCount, setMessageCount] = useState(0);
   const [messageSize, setMessageSize] = useState(0);
 
+  // Calculate the default date range (last week)
+  const today = new Date();
+  const lastWeek = new Date(today);
+  lastWeek.setDate(today.getDate() - 7);
+
+  const [startDate, setStartDate] = useState(lastWeek);
+  const [endDate, setEndDate] = useState(today);
+
   const apiKey = import.meta.env.VITE_API_KEY;
   const apiUrl = import.meta.env.VITE_API_URL;
 
   // Axios instance with default headers
   const axiosInstance = axios.create({
     headers: {
-      'secret': apiKey
-    }
+      secret: apiKey,
+    },
   });
 
   // Fetch initial data
@@ -38,19 +46,23 @@ const Home = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
-  // Fetch message count and size
+  // Fetch message count and size based on the currentPath and selected dates
   useEffect(() => {
+    const start = startDate ? startDate.toISOString() : new Date().toISOString();
+    const end = endDate ? endDate.toISOString() : new Date().toISOString();
+
+    const url = currentPath
+      ? `${apiUrl}/messages/count?path=${currentPath}&start_date=${start}&end_date=${end}`
+      : `${apiUrl}/messages/count?start_date=${start}&end_date=${end}`;
+
     axiosInstance
-      .get(
-        'http://192.168.80.233:8000/messages/count?start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z',
-        { headers: { accept: 'application/json' } }
-      )
+      .get(url, { headers: { accept: "application/json" } })
       .then((response) => {
         setMessageCount(response.data.count);
         setMessageSize(response.data.size);
       })
       .catch((error) => console.error("Error fetching message data:", error));
-  }, []);
+  }, [currentPath, startDate, endDate]);
 
   // Handle topic selection
   const handleTopicClick = (topic) => {
@@ -72,6 +84,28 @@ const Home = () => {
       .catch((error) => console.error("Error fetching topic data:", error));
   };
 
+  // Handle back button click
+  const handleBackClick = () => {
+    if (currentPath) {
+      const newPath = currentPath.split("/").slice(0, -1).join("/");
+      setCurrentPath(newPath);
+
+      axiosInstance
+        .get(
+          newPath ? `${apiUrl}/topics/?path=${newPath}/` : `${apiUrl}/topics/`
+        )
+        .then((response) => {
+          const topicNames = response.data.map((topic, index) => ({
+            value: topic,
+            key: index,
+          }));
+          setData(topicNames);
+          setSelectedTopicData(response.data);
+        })
+        .catch((error) => console.error("Error fetching topic data:", error));
+    }
+  };
+
   // Filter data based on search query
   const filteredData = data.filter((item) =>
     item.value.toLowerCase().includes(searchQuery.toLowerCase())
@@ -86,7 +120,7 @@ const Home = () => {
           data={filteredData.map((item) => item.value)}
           onChange={(value) => setSearchQuery(value)}
         />
-        <button>zpátky</button>
+        <button onClick={handleBackClick}>zpátky</button>
         {filteredData.map((item) => (
           <div
             key={item.key}
@@ -110,22 +144,36 @@ const Home = () => {
             <h1>{messageSize}</h1>
           </div>
         </div>
-        <DateTimePicker
-          clearable
-          defaultValue={new Date()}
-          label="Pick date and time"
-          placeholder="Pick date and time"
-          type="multiple"
-        />
+
+        <div className="blocks">
+          <div className="block">
+            <h2>Datum a čas od</h2>
+            <DateTimePicker
+              clearable
+              value={startDate}
+              onChange={setStartDate}
+              placeholder="Pick date and time"
+            />
+          </div>
+          <div className="block">
+            <h2>Datum a čas do</h2>
+            <DateTimePicker
+              clearable
+              value={endDate}
+              onChange={setEndDate}
+              placeholder="Pick date and time"
+            />
+          </div>
+        </div>
 
         <div>
-          <AreaGraph />
-          <AreaGraph2 />
+          <AreaGraph currentPath={currentPath} startDate={startDate} endDate={endDate} />
+          <AreaGraph2 currentPath={currentPath} startDate={startDate} endDate={endDate} />
         </div>
 
         <div className="footer">
           <button className="map-button">
-            <Link to="/map">Přejít na mapu</Link> 
+            <Link to="/map">Přejít na mapu</Link>
           </button>
         </div>
       </div>

@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Map } from "react-map-gl/maplibre";
 import DeckGL from "@deck.gl/react";
-import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
-import { Layer } from "deck.gl";
+import { GeoJsonLayer, ArcLayer, TextLayer } from "@deck.gl/layers";
+import { Link } from "react-router-dom";
 
 const blueColor = [0, 0, 255];
 const whiteColor = [255, 255, 255];
@@ -25,10 +25,10 @@ function calculateArcs(data, selectedCounty) {
   }
   if (!selectedCounty) {
     selectedCounty = {
-      name: "unknown",
+      name: "DCUK",
       latitude: 50.6810518,
       longitude: 14.0069265,
-    }; // Select first entry as default
+    };
   }
   const arcs = data.map((f) => ({
     source: selectedCounty,
@@ -41,7 +41,11 @@ function calculateArcs(data, selectedCounty) {
 }
 
 function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
-  const [selectedCounty, selectCounty] = useState();
+  const [selectedCounty, selectCounty] = useState({
+    name: "DCUK",
+    latitude: 50.6810518,
+    longitude: 14.0069265,
+  });
   const [animationStep, setAnimationStep] = useState(0);
 
   useEffect(() => {
@@ -55,6 +59,20 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     () => calculateArcs(data, selectedCounty),
     [data, selectedCounty]
   );
+
+  useEffect(() => {
+    const handleRightClick = (event) => {
+      event.preventDefault();
+      console.log("Right-click detected at:", event.clientX, event.clientY);
+      // Add your custom right-click functionality here
+    };
+
+    window.addEventListener("contextmenu", handleRightClick);
+
+    return () => {
+      window.removeEventListener("contextmenu", handleRightClick);
+    };
+  }, []);
 
   const layers = [
     new GeoJsonLayer({
@@ -94,10 +112,26 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
         getWidth: animationStep,
       },
     }),
+    new TextLayer({
+      id: "text-layer",
+      data: [
+        ...data,
+        { name: "DCUK", latitude: 50.6810518, longitude: 14.0069265 }
+      ],
+      pickable: true,
+      getPosition: (d) => [d.longitude, d.latitude],
+      getText: (d) => d.name,
+      getSize: (d) => (d.name === "DCUK" ? 48 : 32),
+      getColor: (d) => (d.name === "DCUK" ? [0, 0, 0] : [0, 0, 0]),
+      getAngle: 0,
+      getTextAnchor: 'middle',
+      getAlignmentBaseline: 'center'
+    }),
   ];
 
   return (
     <div className="map">
+      <Link to="/" className="dash-button">« Zpět na dashboard</Link>
       <DeckGL
         layers={layers}
         initialViewState={INITIAL_VIEW_STATE}
