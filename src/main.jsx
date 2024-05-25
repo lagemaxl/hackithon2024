@@ -8,7 +8,7 @@ import NoPage from "./pages/NoPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
-import '@mantine/dates/styles.css';
+import "@mantine/dates/styles.css";
 
 function useWebSocket(url) {
   const [data, setData] = useState([]);
@@ -21,6 +21,12 @@ function useWebSocket(url) {
     };
 
     ws.onmessage = (event) => {
+      if (
+        !JSON.parse(event.data).latitude ||
+        !JSON.parse(event.data).longitude
+      ) {
+        return;
+      }
       console.log(event.data);
       const timestampedData = {
         ...JSON.parse(event.data),
@@ -46,7 +52,9 @@ function useWebSocket(url) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setData((prevData) => prevData.filter(item => (Date.now() - item.timestamp) <= 1000));
+      setData((prevData) =>
+        prevData.filter((item) => Date.now() - item.timestamp <= 1000)
+      );
     }, 2000);
 
     return () => clearInterval(interval);
@@ -62,7 +70,9 @@ export default function App() {
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/">  {/*element={<Layout />}*/}
+          <Route path="/">
+            {" "}
+            {/*element={<Layout />}*/}
             <Route index element={<Home />} />
             <Route path="map" element={<MapComponent data={data} />} />
             <Route path="*" element={<NoPage />} />
