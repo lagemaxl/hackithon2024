@@ -10,10 +10,10 @@ const whiteColor = [255, 255, 255];
 const INITIAL_VIEW_STATE = {
   longitude: 14.0323,
   latitude: 50.6611,
-  zoom: 8,
+  zoom: 10,
   maxZoom: 15,
-  pitch: 30,
-  bearing: 30,
+  pitch: 50,
+  bearing: 10,
 };
 
 const MAP_STYLE =

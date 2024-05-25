@@ -8,6 +8,7 @@ import NoPage from "./pages/NoPage";
 import "./index.css";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
+import '@mantine/dates/styles.css';
 
 function useWebSocket(url) {
   const [data, setData] = useState([]);
@@ -61,7 +62,7 @@ export default function App() {
     <MantineProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/">  {/*element={<Layout />}*/}
             <Route index element={<Home />} />
             <Route path="map" element={<MapComponent data={data} />} />
             <Route path="*" element={<NoPage />} />
