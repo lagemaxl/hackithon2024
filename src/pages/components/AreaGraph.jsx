@@ -3,8 +3,12 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const apiKey = import.meta.env.VITE_API_KEY;
 
-const fetchData = async () => {
-  const response = await fetch('http://192.168.80.233:8000/messages/?start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z', {
+const fetchData = async (currentPath) => {
+  const url = currentPath
+    ? `http://192.168.80.233:8000/messages/?path=${currentPath}&start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z`
+    : 'http://192.168.80.233:8000/messages/?start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z';
+
+  const response = await fetch(url, {
     headers: {
       'accept': 'application/json',
       'secret': apiKey
@@ -17,16 +21,16 @@ const fetchData = async () => {
   }));
 };
 
-const AreaGraph = () => {
+const AreaGraph = ({ currentPath }) => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
     const getData = async () => {
-      const messagesData = await fetchData();
+      const messagesData = await fetchData(currentPath);
       setData(messagesData);
     };
     getData();
-  }, []);
+  }, [currentPath]);
 
   return (
     <div style={{ width: '100%', height: 300 }}>
