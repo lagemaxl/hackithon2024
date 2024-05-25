@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const apiKey = import.meta.env.VITE_API_KEY;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const fetchData = async (currentPath) => {
   const url = currentPath
