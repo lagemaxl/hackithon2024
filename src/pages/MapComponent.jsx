@@ -69,7 +69,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     return () => clearTimeout(timer);
   }, [colorState]);
 
- */
+
   const getColors = () => {
     switch (colorState) {
       case 1:
@@ -86,7 +86,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
   };
 
   const { sourceColor, targetColor } = getColors();
-
+ */
   const layers = [
     new GeoJsonLayer({
       id: "geojson",
@@ -102,8 +102,10 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
       data: colorState < 5 ? arcs : [], // Remove arcs when colorState is 5
       getSourcePosition: (d) => [d.source.longitude, d.source.latitude],
       getTargetPosition: (d) => [d.target.longitude, d.target.latitude],
-      getSourceColor: () => sourceColor,
-      getTargetColor: () => targetColor,
+      //getSourceColor: () => sourceColor,
+      //getTargetColor: () => targetColor,
+      getSourceColor: () => blueColor,
+      getTargetColor: () => blueColor,
       getWidth: strokeWidth,
       /**
       updateTriggers: {
