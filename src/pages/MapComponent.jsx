@@ -4,7 +4,7 @@ import DeckGL from "@deck.gl/react";
 import { GeoJsonLayer, ArcLayer, TextLayer } from "@deck.gl/layers";
 import { Link, useLocation } from "react-router-dom";
 
-const blueColor = [0, 0, 255];
+const blueColor = [99, 179, 237]; //rgb(99, 179, 237)
 const whiteColor = [255, 255, 255];
 
 const INITIAL_VIEW_STATE = {
