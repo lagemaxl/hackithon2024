@@ -62,7 +62,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
       data,
       stroked: false,
       filled: true,
-      getFillColor: [0, 0, 0, 0],
+      getFillColor: whiteColor,
       onClick: ({ object }) => selectCounty(object),
       pickable: true,
     }),
