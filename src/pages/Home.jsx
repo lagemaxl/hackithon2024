@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Autocomplete } from "@mantine/core";
+import { Autocomplete, Loader } from "@mantine/core";
 import axios from "axios";
 import AreaGraph from "./components/AreaGraph";
 import AreaGraph2 from "./components/AreaGraph2";
@@ -13,6 +13,8 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [messageCount, setMessageCount] = useState(0);
   const [messageSize, setMessageSize] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [disabledTopics, setDisabledTopics] = useState([]);
 
   // Calculate the default date range (last week)
   const today = new Date();
@@ -68,6 +70,7 @@ const Home = () => {
 
   // Handle topic selection
   const handleTopicClick = (topic) => {
+    setLoading(true);
     const newPath = currentPath
       ? `${currentPath}/${encodeURIComponent(topic)}`
       : encodeURIComponent(topic);
@@ -82,8 +85,13 @@ const Home = () => {
         }));
         setData(topicNames);
         setSelectedTopicData(response.data);
+        if (!response.data || response.data.length === 0) {
+          setCurrentPath(currentPath); // revert to previous path
+          setDisabledTopics((prev) => [...prev, topic]);
+        }
       })
-      .catch((error) => console.error("Error fetching topic data:", error));
+      .catch((error) => console.error("Error fetching topic data:", error))
+      .finally(() => setLoading(false));
   };
 
   // Handle back button click
@@ -119,11 +127,12 @@ const Home = () => {
           onChange={(value) => setSearchQuery(value)}
         />
         <button className="button-home" onClick={handleBackClick}>Domů</button>
+        {loading && <div className="loader"><Loader /></div>}
         {filteredData.map((item) => (
           <div
             key={item.key}
-            className="groups"
-            onClick={() => handleTopicClick(item.value)}
+            className={`groups ${disabledTopics.includes(item.value) ? 'disabled' : ''}`}
+            onClick={() => !disabledTopics.includes(item.value) && handleTopicClick(item.value)}
           >
             <h3>{item.value}</h3>
           </div>
