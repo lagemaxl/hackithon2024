@@ -219,3 +219,17 @@ nav ul li a:focus {
   flex-direction: column;
   margin-bottom: 1em;
 }
+
+.map-button {
+  background-color:#63b3ed;
+  color: white !important;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  position: absolute;
+  z-index: 100;
+  width: 15em;
+  top: 1em;
+  left: 1em;
+}

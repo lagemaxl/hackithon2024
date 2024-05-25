@@ -98,6 +98,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
 
   return (
     <div className="map">
+      <button className="map-button">« Zpět na dashboard</button>
       <DeckGL
         layers={layers}
         initialViewState={INITIAL_VIEW_STATE}
