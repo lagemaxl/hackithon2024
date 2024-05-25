@@ -10,7 +10,7 @@ const Home = () => {
   // Fetch initial data
   useEffect(() => {
     axios
-      .get("http://192.168.80.233:8000/topics/")
+      .get(`${import.meta.env.VITE_API_URL}/topics/`)
       .then((response) => {
         const topicNames = response.data.map((topic, index) => ({ value: topic, key: index }));
         setData(topicNames);
@@ -24,7 +24,7 @@ const Home = () => {
     setCurrentPath(newPath);
 
     axios
-      .get(`http://192.168.80.233:8000/topics/?path=${newPath}/`)
+      .get(`${import.meta.env.VITE_API_URL}/topics/?path=${newPath}/`)
       .then((response) => {
         const topicNames = response.data.map((topic, index) => ({ value: topic, key: index }));
         setData(topicNames);

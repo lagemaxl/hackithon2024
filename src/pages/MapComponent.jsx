@@ -23,7 +23,7 @@ function calculateArcs(data, selectedCounty) {
     return null;
   }
   if (!selectedCounty) {
-    selectedCounty = data[0]; // Select first entry as default
+    selectedCounty =  { name: "unknown", latitude: 50.6810518, longitude: 14.0069265 } // Select first entry as default
   }
   const arcs = data.map((f) => ({
     source: selectedCounty,
@@ -35,20 +35,28 @@ function calculateArcs(data, selectedCounty) {
   return arcs;
 }
 
+
+/*
 function getTooltip({ object }) {
   return object && object.msg && `Sensor ID: ${object.msg.id_senzoru}`;
 }
+*/
 
 function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
   const [selectedCounty, selectCounty] = useState();
   const [colorState, setColorState] = useState(1);
+
+  useEffect(() => {
+    console.log(data);
+    calculateArcs(data);
+    }, []);
 
   const arcs = useMemo(
     () => calculateArcs(data, selectedCounty),
     [data, selectedCounty]
   );
 
-
+/**
   useEffect(() => {
     let timer;
     console.log(colorState);
@@ -60,7 +68,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     return () => clearTimeout(timer);
   }, [colorState]);
 
-
+ */
   const getColors = () => {
     switch (colorState) {
       case 1:
@@ -91,14 +99,20 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
     new ArcLayer({
       id: "arc",
       data: colorState < 5 ? arcs : [], // Remove arcs when colorState is 5
-      getSourcePosition: (d) => [d.source.msg.lon, d.source.msg.lat],
-      getTargetPosition: (d) => [d.target.msg.lon, d.target.msg.lat],
+      getSourcePosition: (d) => [d.source.longitude, d.source.latitude],
+      getTargetPosition: (d) => [d.target.longitude, d.target.latitude],
       getSourceColor: () => sourceColor,
       getTargetColor: () => targetColor,
       getWidth: strokeWidth,
+      /**
       updateTriggers: {
         getSourceColor: colorState,
         getTargetColor: colorState,
+      },
+       */
+      updateTriggers: {
+        getSourceColor: blueColor,
+        getTargetColor: blueColor,
       },
     }),
   ];
@@ -109,7 +123,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
         layers={layers}
         initialViewState={INITIAL_VIEW_STATE}
         controller={true}
-        getTooltip={getTooltip}
+        //getTooltip={getTooltip}
       >
         <Map reuseMaps mapStyle={mapStyle} />
       </DeckGL>
