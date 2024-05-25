@@ -10,7 +10,7 @@ const whiteColor = [255, 255, 255];
 const INITIAL_VIEW_STATE = {
   longitude: 14.0323,
   latitude: 50.6611,
-  zoom: 10,
+  zoom: 8,
   maxZoom: 15,
   pitch: 50,
   bearing: 10,
