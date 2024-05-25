@@ -48,7 +48,19 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
   });
   const [animationStep, setAnimationStep] = useState(0);
   const location = useLocation();
-  const showbtn = location.pathname === "/map";
+  const showbtn = (window.self === window.top);
+        
+        // Function to display the button based on the showbtn value
+        function displayButton() {
+            if (showbtn) {
+                const button = document.createElement('button');
+                button.textContent = 'Click Me';
+                document.body.appendChild(button);
+            }
+        }
+
+        // Call the displayButton function when the window loads
+        window.onload = displayButton;
 
   useEffect(() => {
     const interval = setInterval(() => {
