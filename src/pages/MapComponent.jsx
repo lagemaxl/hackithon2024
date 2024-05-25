@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from "react";
 import { Map } from "react-map-gl/maplibre";
 import DeckGL from "@deck.gl/react";
 import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers";
+import { Layer } from "deck.gl";
 
 const blueColor = [0, 0, 255];
 const whiteColor = [255, 255, 255];
@@ -49,7 +50,7 @@ function MapComponent({ data, strokeWidth = 1, mapStyle = MAP_STYLE }) {
   useEffect(() => {
     console.log(data);
     calculateArcs(data);
-    }, []);
+    }, [data]);
 
   const arcs = useMemo(
     () => calculateArcs(data, selectedCounty),

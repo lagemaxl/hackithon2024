@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./pages/Layout";
@@ -9,32 +9,36 @@ import "./index.css";
 import "@mantine/core/styles.css";
 import { MantineProvider } from "@mantine/core";
 
-const data = [
-  { name: "eui-b827ebfffe08a202", latitude: 50.6651836, longitude: 14.0253383 },
-  { name: "unknown", latitude: 50.6660547, longitude: 14.0206322 },
-  { name: "unknown", latitude: 50.6660547, longitude: 14.0206322 },
-  { name: "unknown", latitude: 50.6810518, longitude: 14.0069265 },
-  { name: "unknown", latitude: 50.6810518, longitude: 14.0069265 },
-];
+function useWebSocket(url) {
+  const [data, setData] = useState([]);
 
-const ws = new WebSocket(`${import.meta.env.VITE_WEB_SOCKET}`);
+  useEffect(() => {
+    const ws = new WebSocket(url);
 
-ws.onopen = () => {
-  console.log("WebSocket connection opened");
-};
+    ws.onopen = () => {
+      console.log("WebSocket connection opened");
+    };
 
-ws.onmessage = (event) => {
-  console.log(event.data);
-  data.push(event.data);
-  console.log(data.length.json());
-  console.log(data);
-};
+    ws.onmessage = (event) => {
+      console.log(event.data);
+      setData((prevData) => [...prevData, JSON.parse(event.data)]);
+    };
 
-ws.onclose = () => {
-  console.log("WebSocket connection closed");
-};
+    ws.onclose = () => {
+      console.log("WebSocket connection closed");
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [url]);
+
+  return data;
+}
 
 export default function App() {
+  const data = useWebSocket(import.meta.env.VITE_WEB_SOCKET);
+
   return (
     <MantineProvider>
       <BrowserRouter>
