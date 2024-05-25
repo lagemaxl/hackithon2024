@@ -246,3 +246,13 @@ a {
   border-radius: 5px;
   border: 1px solid black;
 }
+
+.button-home {
+  background-color: #63b3ed;
+  color: white !important;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 100;
+}

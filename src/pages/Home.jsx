@@ -88,24 +88,20 @@ const Home = () => {
 
   // Handle back button click
   const handleBackClick = () => {
-    if (currentPath) {
-      const newPath = currentPath.split("/").slice(0, -1).join("/");
-      setCurrentPath(newPath);
+    // Reset the current path to home
+    setCurrentPath("");
 
-      axiosInstance
-        .get(
-          newPath ? `${apiUrl}/topics/?path=${newPath}/` : `${apiUrl}/topics/`
-        )
-        .then((response) => {
-          const topicNames = response.data.map((topic, index) => ({
-            value: topic,
-            key: index,
-          }));
-          setData(topicNames);
-          setSelectedTopicData(response.data);
-        })
-        .catch((error) => console.error("Error fetching topic data:", error));
-    }
+    axiosInstance
+      .get(`${apiUrl}/topics/`)
+      .then((response) => {
+        const topicNames = response.data.map((topic, index) => ({
+          value: topic,
+          key: index,
+        }));
+        setData(topicNames);
+        setSelectedTopicData(response.data);
+      })
+      .catch((error) => console.error("Error fetching topic data:", error));
   };
 
   // Filter data based on search query
@@ -122,7 +118,7 @@ const Home = () => {
           data={filteredData.map((item) => item.value)}
           onChange={(value) => setSearchQuery(value)}
         />
-        <button onClick={handleBackClick}>zpátky</button>
+        <button className="button-home" onClick={handleBackClick}>Domů</button>
         {filteredData.map((item) => (
           <div
             key={item.key}
