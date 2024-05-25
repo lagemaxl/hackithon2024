@@ -5,8 +5,8 @@ const apiKey = import.meta.env.VITE_API_KEY;
 
 const fetchData = async (currentPath) => {
   const url = currentPath
-    ? `http://192.168.80.233:8000/messages/?path=${currentPath}&start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z`
-    : 'http://192.168.80.233:8000/messages/?start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z';
+    ? `${apiUrl}/messages/?path=${currentPath}&start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z`
+    : `${apiUrl}/messages/?start_date=2024-05-25T04%3A00%3A00.000Z&end_date=2024-05-26T04%3A00%3A00.000Z`;
 
   const response = await fetch(url, {
     headers: {
