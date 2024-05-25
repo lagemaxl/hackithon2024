@@ -17,8 +17,23 @@ const fetchData = async (currentPath) => {
   const data = await response.json();
   return data.map(item => ({
     name: new Date(item.date).toLocaleTimeString(),
+    date: new Date(item.date).toLocaleDateString(),
     size: item.size,
   }));
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="custom-tooltip" style={{ backgroundColor: '#fff', padding: '10px', border: '1px solid #ccc' }}>
+        <p className="label">{`Čas: ${label}`}</p>
+        <p className="label">{`Datum: ${payload[0].payload.date}`}</p>
+        <p className="intro">{`Velikost: ${new Intl.NumberFormat('cs-CZ').format(payload[0].value)} B`}</p>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 const AreaGraph2 = ({ currentPath }) => {
@@ -41,14 +56,14 @@ const AreaGraph2 = ({ currentPath }) => {
           margin={{
             top: 10,
             right: 30,
-            left: 0,
+            left: 10,
             bottom: 0,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
+          <YAxis tickFormatter={(tick) => new Intl.NumberFormat('cs-CZ').format(tick)} />
+          <Tooltip content={<CustomTooltip />} />
           <Area type="monotone" dataKey="size" stroke="#63b3ed" fill="#63b3ed" />
         </AreaChart>
       </ResponsiveContainer>
